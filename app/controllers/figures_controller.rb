@@ -59,30 +59,35 @@ class FiguresController < ApplicationController
       @figure.update(:name => params["figure"]["name"])
     end
 
-    if !params["title"]["name"].empty?
-      @title = Title.create(:name => params["title"]["name"])
-      @title.save
-      @figure.title_ids = params["figure"]["title_ids"]
-      @figure.title_ids = @figure.title_ids << @title.id
-      #@figure.titles = @figure.titles << @title
-      @figure.save
-
-    else
-      @figure.title_ids = params["figure"]["title_ids"]
+    Title.all.each do |title|
+      if title.name == params["title"]["name"]
+        @figure.title_ids << title.id
+      end
     end
+
+    #if !params["title"]["name"].empty? && !Title.all.include?(params["title"]["name"])
+    #  @title = Title.create(:name => params["title"]["name"])
+    #  @title.save
+    #  @figure.title_ids = params["figure"]["title_ids"]
+    #  @figure.title_ids = @figure.title_ids << @title.id
+      #@figure.titles = @figure.titles << @title
+    #  @figure.save
+
+    #else
+    #  @figure.title_ids = params["figure"]["title_ids"]
+    #end
 
     if !params["landmark"]["name"].empty?
       @landmark = Landmark.create(:name => params["landmark"]["name"])
       @landmark.save
       @figure.landmark_ids = params["figure"]["landmark_ids"]
       @figure.landmark_ids = @figure.landmark_ids << @landmark.id
+
       #@figure.landmarks = @figure.landmarks << @landmark
       @figure.save
     else
       @figure.landmark_ids = params["figure"]["landmark_ids"]
     end
-
-
 
     redirect to "/figures/#{@figure.id}"
   end
